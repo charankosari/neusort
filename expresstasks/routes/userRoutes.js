@@ -4,11 +4,11 @@ const User = require("../models/User");
 const authenticate = require("../middlewares/authenticate");
 
 // Update user profile
-router.put("/profile/update", authenticate, async (req, res) => {
-  const { name, email } = req.body;
+router.put("/profile/update", async (req, res) => {
+  const { name, email, id } = req.body;
   try {
     const user = await User.findByIdAndUpdate(
-      req.user.userId,
+      id,
       { name, email },
       { new: true }
     );
@@ -19,10 +19,11 @@ router.put("/profile/update", authenticate, async (req, res) => {
 });
 
 // Get user order history (assuming an Order model exists)
-router.get("/order-history", authenticate, async (req, res) => {
+router.get("/order-history/:id", async (req, res) => {
   try {
     // Fetch order history from Order model
-    const orders = await Order.find({ userId: req.user.userId });
+    const id = req.params.id;
+    const orders = await Order.find({ userId: id });
     res.json(orders);
   } catch (error) {
     res.status(500).json({ error: "Server error" });
